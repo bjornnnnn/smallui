@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Small UI Demo</title>
+
+<style type="text/css">
+body {
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+
+}
+
+.formdiv {
+    border: 2px solid #AAAAAA;
+    margin: 10px;
+    padding: 15px;
+}
+
+.inputrow {
+    margin-bottom: 10px;
+    display: block;
+}
+table {border-collapse: collapse; font-family: "Helvetica";}
+th {  border: 1px solid #AAA; 
+padding: 5px;
+background-color: yellow;}
+
+td {  border: 1px solid #AAA; 
+padding: 5px;}
+
+.tablekeycell{text-align: end;}
+.tablevaluecell{text-align: left;}
+
+</style>
+    
+    <script src="smallui.js"></script>
+
+</head>
+<body>
+    <div class="formdiv">
+<h3>User</h3>
+        <form id="user"  onsubmit="submitForm('user'); this.reset(); return false;">
+            <input type="hidden" name="_id" value="0" />
+            <input type="hidden" name="_type" value="user" />
+            
+            <span class="inputrow">
+                <label for="name">Name:</label>
+                <input type="text" name="name" id="name"/>
+            </span>
+                    
+
+            <span class="inputrow">
+                <label for="usertype">User type:</label>
+                <select type="select" id="usertype" name="usertype">
+                    <option value="admin">Admin</option>
+                    <option value="user">User</option>
+                    <option value="customer" checked=true>Customer</option>
+                </select>
+            </span>
+            
+            <span class="inputrow">
+                <input type="radio" name="access_level" value="active" id="radio_active" checked="true"/>
+                <label for="radio_active">Active</label>
+                
+                <input type="radio" name="access_level" id="radio_inactive" value="inactive"/>
+                <label for="radio_inactive">Inactive</label>
+            
+            </span>
+                <input type="reset" value="Reset"/>
+                <input type="submit" value="Submit"/>
+        </form>
+    </div>
+        <div id="objectListDiv">
+            <ul id="namelist">
+                
+            </ul>
+        </div>
+
+        <div id="objectViewDiv">
+            <table>
+                <thead>
+                    <tr><th>attribute</th><th>value</th></tr></thead>
+                <tbody id="objectViewTBody">
+
+                </tbody>
+            </table>
+        </div>
+</body>
+</html>
