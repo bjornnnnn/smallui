@@ -35,10 +35,10 @@
             
                 <label for="loginpassword">Login Password:</label>
                 <input type="password" name="loginpassword" id="loginpassword" value="" />
-            
+            </span>
+            <span class="inputrow">
                 <label for="passchange">Change Password at next login:</label>
                 <input type="checkbox" name="passchange" id="passchange"/>
-
             </span>
                     
 
@@ -98,7 +98,7 @@
 
         <span class="inputrow">
             <label for="name">Association Name:</label>
-            <input type="text" name="name"></input>
+            <input type="text" name="name" value=""></input>
         </span>
         
         <span class="inputrow">
@@ -144,14 +144,9 @@
     
 
 <script>
-    // Do this automatically in init step:
-    resetForm("user")
-    getModelFromForm("user")
-    resetForm("resource")
-    getModelFromForm("resource")
-    resetForm("association")
-    getModelFromForm("association")
-
+    // Init everything when the above HTML has loaded.
+    sui_init()
 </script>
+    
     </body>
 </html>

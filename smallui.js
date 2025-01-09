@@ -25,6 +25,24 @@ var model = {}
 // 1: Utilities
 
 /**
+ * The Initialization function that shall be run first thing after the HTML doc has loaded.
+ */
+function sui_init(){
+    initView()
+    let forms = document.querySelectorAll("form")
+    for (var form of forms){
+        resetForm(form.id)
+        getModelFromForm(form.id)
+    }
+    //resetForm("user")
+    //getModelFromForm("user")
+    //resetForm("resource")
+    //getModelFromForm("resource")
+    //resetForm("association")
+    //getModelFromForm("association")
+}
+
+/**
  * Hides a HTML-element by setting its style display to none.
  * @param {string} elemId 
  */
