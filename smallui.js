@@ -31,7 +31,7 @@ var model = {}
 function hideElem(elemId){
     let e = document.getElementById(elemId)
     if (e == null){
-        console.error(`No element with id '${elemId}' found in document.`)
+        console.error(`SUI: No element with id '${elemId}' found in document.`)
     } else {
         e.setAttribute("style", "display:none")
     }
@@ -44,7 +44,7 @@ function hideElem(elemId){
 function showElem(elemId){
     let e = document.getElementById(elemId)
     if (e == null){
-        console.error(`No element with id '${elemId}' found in document.`)
+        console.error(`SUI: No element with id '${elemId}' found in document.`)
     } else {
         e.setAttribute("style", "display:block")
     }}
@@ -66,7 +66,9 @@ function runTests(){
  * @param {string=} dataType 
  */
 function trigger_on_data_mutation(dataType = undefined){
+    hideAllForms()
     showListing()
+    showTypes()
 }
 
 
@@ -135,10 +137,10 @@ function test_updateData(){
     let dstr = JSON.stringify(d)
     let expected = '[{"_id":"1","val":"1","additional_attr":"A"},{"_id":2,"val":"4"}]'
     if(dstr == expected){
-        console.info("test_updateData: PASS")
+        console.info("SUI: test_updateData: PASS")
         return true
     } else {
-        console.info(`test_updateData: FAIL -> expected ${expected} but got ${dstr} `)
+        console.info(`SUI: test_updateData: FAIL -> expected ${expected} but got ${dstr} `)
         return false
     }
 }
@@ -153,7 +155,7 @@ function test_updateData(){
 function insertData(data, newObject){
     var ndata = JSON.parse(JSON.stringify(data))
     if(newObject["_id"] == undefined){
-        console.error("A new object must have an _id field which is missing here! --> " + JSON.stringify(newObject, null, 2))
+        console.error("SUI: A new object must have an _id field which is missing here! --> " + JSON.stringify(newObject, null, 2))
     }
 
     if (newObject["_id"] == "0"){
@@ -174,11 +176,11 @@ function upsertData(dobj){
     let objs = getData(data, (function(a){return a._id == dobj._id}))
     if (objs.length == 0){
         // New object, insert -->
-        console.debug("Create new object")
+        console.debug("SUI: Create new object")
         data = insertData(data, dobj)
     } else {
         // Existing object, update -->
-        console.debug("Update object...")
+        console.debug("SUI: Update object...")
         data = updateData(data, dobj) 
     }
 
@@ -238,10 +240,10 @@ function getDOFromFormById(formId){
 function resetForm(formId){
     if (formId in model){
         loadForm(model[formId])
+    } else {
+        console.error(`SUI: Cannot find expected form (id:${formId}) in model.`)
     }
 }
-
-
 
 
 
@@ -250,7 +252,19 @@ function resetForm(formId){
  * @param {Object} dobj 
  */
 function loadForm(dobj){
+    initView()
 
+    // Check all select in form, populate with dynamic data if attribute sui-init-fn is present:
+    let formselects = document.querySelectorAll(`form[id='${dobj._type}'] select`)
+    for (var fosel of formselects){
+        if (fosel.getAttribute('sui-init-fn')){
+            console.debug(`Found sui-init-fn: ${fosel.getAttribute('sui-init-fn')}`)
+            fosel.innerHTML = ""
+            initfn[fosel.getAttribute('sui-init-fn')]()
+        }
+    }
+
+    showElem(`${dobj._type}formdiv`)
     /**
      * Special case for radio input assignment.
      * @param {string} qSelect 
@@ -267,8 +281,6 @@ function loadForm(dobj){
         }
     }
 
-    let handledKeys = []
-    //resetForm(dobj._type)
     let keys = Object.keys(dobj)
     for (var k of keys){
         let qInput = `form[id='${dobj._type}'] input[name='${k}']`
@@ -326,7 +338,7 @@ function loadFormWithObjById(objId){
     // Load data with id anId into the corresponding form. 
     let dobjs = getDataById(data, objId)
     if (dobjs.length == 0){
-        console.error(`You cannot load a non existing object into form. (object._id: ${objId})`)
+        console.error(`SUI: You cannot load a non existing object into form. (object._id: ${objId})`)
     }
     let dobj = dobjs[0]
     loadForm(dobj)
@@ -338,16 +350,39 @@ function loadFormWithObjById(objId){
  */
 function submitForm(formId){
     let formDObj = getDOFromFormById(formId)
-    console.debug(`form data: ${JSON.stringify(formDObj, null, 2)}`)
+    console.debug(`SUI: form data: ${JSON.stringify(formDObj, null, 2)}`)
     formDObj ? upsertData(formDObj) : console.error(`Could not make formDObj from form with id: '${formId}'.`)
 }
 
+function showDefaultForm(formId){
+    initView()
+    resetForm(formId)
+    showElem(`${formId}formdiv`)
+}
+
+function hideAllForms(){
+    let formdivs = document.querySelectorAll(".formdiv")
+    for (var f of formdivs){
+        if (f != null){
+            hideElem(f.id)
+        }
+    }
+}
 
 
+function initView(){
+    hideAllForms()
+    hideObjectView()
+}
 
 // 4: OBJECT View
 
+function hideObjectView(){
+    hideElem('objectViewDiv')
+}
+
 function viewObject(objId){
+    initView()
     let tbody = document.getElementById("objectViewTBody")
     tbody ? tbody.innerHTML = "" : console.error("Could not find element with id 'objectViewTBody' in document.")
     let obj = getDataById(data, objId)[0]
@@ -364,6 +399,7 @@ function viewObject(objId){
         tr.appendChild(td2)
         tbody ? tbody.appendChild(tr) : console.error(`Cannot add node to non existent tbody.`)
     }
+    showElem('objectViewDiv')
 }
 
 // 5: OBJECT Listing
@@ -380,6 +416,19 @@ function showListing(){
         let li = document.createElement("li")
         li.innerHTML = `${data[i].name} is_a ${data[i]._type} <a href="javascript:viewObject('${data[i]._id}')"">View</a> <a href="javascript:loadFormWithObjById('${data[i]._id}')"">Update</a> <a href="javascript:deleteById('${data[i]._id}')">Delete</a>`
         ul ? ul.appendChild(li) : console.error(`Cannot append child to nonexistent UL.`)
+    }
+}
+
+// 6: type listing
+
+function showTypes(){
+    let ul = document.getElementById('listoftypes')
+    ul ? ul.innerHTML = "" : console.error("Expected but failed to find ul with id 'listoftypes' in document!")
+    let dts = Object.keys(model)
+    for (var dt of dts){
+        let li = document.createElement('li')
+        li.innerHTML = `<a href='javascript:showDefaultForm("${dt}")'>${dt}</a>`
+        ul?.appendChild(li)
     }
 }
 

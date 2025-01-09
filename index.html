@@ -8,6 +8,7 @@
     <link href="smallui_demo.css" rel="stylesheet" />
     <script src="testdata.js"></script>
     <script src="smallui.js"></script>
+    <script src="sui_dyn_fn.js"></script>
 
 </head>
 <body>
@@ -16,15 +17,13 @@
     </header>
 
 <nav>
-    <h3>Data Objects</h3>
-    <ul id="listofdobjs">
-    </ul>
-
+    <h3>Views</h3>
+    <ul id="listoftypes">
     </ul>
 </nav>
 
 <main>
-    <div class="formdiv">
+    <div class="formdiv" id="userformdiv">
 <h3>User</h3>
         <form id="user"  onsubmit="submitForm('user'); resetForm('user'); return false;">
             <input type="hidden" name="_id" value="0" />
@@ -73,10 +72,10 @@
     </div>
     
     
-    <div class="formdiv">
+    <div class="formdiv" id="resourceformdiv">
         <h3>Resource</h3>
 
-    <form id="resource"  onsubmit="submitForm('resource'); resetForm('resource'); return false;">
+    <form id="resource"  onsubmit="javascript:submitForm('resource');resetForm('resource');hideAllForms();return false;">
         <input type="hidden" name="_id" value="0" />
         <input type="hidden" name="_type" value="resource" />
 
@@ -87,6 +86,36 @@
 
         <input type="reset" value="Reset"/>
         <input type="submit" value="Submit"/>
+    </form>
+    </div>
+
+    <div class="formdiv" id="associationformdiv">
+        <h3>Association</h3>
+
+    <form id="association"  onsubmit="javascript:submitForm('association');resetForm('association');hideAllForms();return false;">
+        <input type="hidden" name="_id" value="0" />
+        <input type="hidden" name="_type" value="association" />
+
+        <span class="inputrow">
+            <label for="name">Association Name:</label>
+            <input type="text" name="name"></input>
+        </span>
+        
+        <span class="inputrow">
+        <label for="userref">User:</label>
+        <select id="userref" name="userref" sui-init-fn="populateUserref">
+
+        </select>
+
+        <label for="resourceref">Resource:</label>
+        <select id="resourceref" name="resourceref" sui-init-fn="populateResourceref">
+
+        </select>
+        </span>
+
+        <input type="reset" value="Reset"/>
+        <input type="submit" value="Submit"/>
+
     </form>
     </div>
 
@@ -120,6 +149,8 @@
     getModelFromForm("user")
     resetForm("resource")
     getModelFromForm("resource")
+    resetForm("association")
+    getModelFromForm("association")
 
 </script>
     </body>

@@ -1,6 +1,6 @@
 
 body {
-    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-family:  'Helvetica', 'Arial', sans-serif;
 
 }
 
@@ -52,7 +52,8 @@ aside {
     margin-bottom: 10px;
     display: block;
 }
-table {border-collapse: collapse; font-family: "Helvetica";}
+table {border-collapse: collapse;}
+
 th {  border: 1px solid #AAA; 
 padding: 5px;
 background-color: yellow;}
