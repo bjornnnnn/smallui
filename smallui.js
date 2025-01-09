@@ -2,14 +2,14 @@
 
 /**
  * SMALLUI:
- * A small UI framework for CRUD operations on different data.
+ * A small UI framework for CRUD operations on data objects.
  * 
  * Convention: dobj must have a id key named '_id'. This value must never change.
  * 
  * Convention: dobj must have a type key named '_type'. 
  * The value of _type must have a corresponding form named similarily if it is to be updated by human interactions.
  * 
- * Convention: create and update form is identical and identified with key named '_type' in the data object.
+ * Convention: The same HTML form is used to create and update data objects. The do and form are associated via a key named '_type' in the data object.
  */
 
 
@@ -17,6 +17,9 @@
 
 var data = []
 var id_counter = 0
+
+// Model will be populated from HTML at first use
+var model = {}
 
 
 // 1: Utilities
@@ -199,8 +202,17 @@ function deleteById(objId){
 
 // 3: FORMS
 
+function getModelFromForm(formId){
+    if (formId in model){
+        // Do nothing, already has model
+    } else {
+        model[formId] = getDOFromFormById(formId)
+    }
+}
+
+
 /**
- * 
+ * Convert input in form into data object.
  * @param {string} formId 
  * @returns {{_id: string, _type: string } | undefined}
  */
@@ -209,108 +221,115 @@ function getDOFromFormById(formId){
     let form  = document.getElementById(formId)
     if (form){
         let fd = new FormData(form)
+        /** @type {{_id: string, _type: string}} */
         let dobj = Object.fromEntries(fd)
         dobj._id = dobj._id ?? -1 
         dobj._type = dobj._type ?? "notype"
         return dobj
     } else {
-        console.error(`Form is null (id: ${formId})`)
+        console.error(`Cannot find form. Expecting document to contain a form with id: ${formId}.`)
     }
 }
 
 /**
- * 
+ * Reset form to default state.
  * @param {string} formId 
  */
 function resetForm(formId){
-    /** @type {HTMLFormElement | null} */
-    let form  = document.getElementById(formId)
-    form ? form.reset() : console.error(`Cannot find form to reset (id: ${formId})`)
+    if (formId in model){
+        loadForm(model[formId])
+    }
 }
 
+
+
+
+
 /**
- * 
- * @param {string} type 
- * @param {string} name 
- * @param {string} value 
+ * Load a data object into its corresponding HTML form.
+ * @param {Object} dobj 
  */
-function setFormInputValue(type, name, value){
-
-    // Plain input is those that have name and value:
-    // Everything but radio.
-    /**
-     * 
-     * @param {string} name 
-     * @param {string} value 
-     */
-    function setPlain(name, value){
-        let es = document.getElementsByName(name)
-        for(var e of es){
-            e.setAttribute("value", value)
-        }
-    }
+function loadForm(dobj){
 
     /**
-     * 
-     * @param {string} name 
+     * Special case for radio input assignment.
+     * @param {string} qSelect 
      * @param {string} value 
      */
-    function setRadio(name, value){
-        let es = document.getElementsByName(name)
-        for(var e of es){
-            // mark the selected option
-            if (e.getAttribute("value") == value){
-                e.setAttribute("checked", "true")
+    function setRadioValue(qSelect, value){
+        let radioButtons = document.querySelectorAll(qSelect)
+        for(var rb of radioButtons){
+            if(rb.value == value){
+                rb.checked = true
             } else {
-                e.setAttribute("checked", "false")
+                rb.checked = false
             }
         }
     }
 
-    if (type == "radio"){
-        setRadio(name, value)
-    } else {
-        setPlain(name, value)
+    let handledKeys = []
+    //resetForm(dobj._type)
+    let keys = Object.keys(dobj)
+    for (var k of keys){
+        let qInput = `form[id='${dobj._type}'] input[name='${k}']`
+        let e = document.querySelector(qInput)
+        if(e){
+            console.debug(`Query for input: ${qInput} (input is INPUT)`)
+            // this is input, but it might be a radio button or a checkbox that must be specially treated.
+            if (e.getAttribute('type') == 'radio'){
+                console.debug(`(input is RADIO)`)
+                setRadioValue(qInput, dobj[k])
+
+            } else if(e.getAttribute('type') == 'checkbox'){
+                // Especially tricky: Not visible in submit if not checked. Update algorithm cannot handle this.
+                console.debug(`(input is CHECKBOX)`)
+                if (dobj[k] == 'on'){
+                    e.checked = true
+                } else {
+                    e.checked = false
+                }
+            } else {
+                e.setAttribute("value", dobj[k])
+            }
+
+        }
+
+        if (e == null){
+            // no input found with name n, look for select as well.
+            let qSelect = `form[id='${dobj._type}'] select[name='${k}'] `
+            e = document.querySelector(qSelect)
+            if(e){
+                console.debug(`Query for input: ${qSelect} (input is SELECT)`)
+                e.value = dobj[k]
+            }
+        } 
+
+        if (e == null) {
+            // e is still not found. Look for textArea.
+            let qTA = `form[id='${dobj._type}'] textarea[name='${k}']`
+            e = document.querySelector(qTA)
+            if (e){
+                e.innerHTML = dobj[k]
+                console.debug(`Query for input: ${qTA} (input is TEXTAREA)`)
+            }
+        }
+
+        e ? console.debug(`selected elem: ${e} -> ${k}.value: ${dobj[k]}`) : console.error(`Could not find input to set!. name: ${k}`)
     }
 }
-
-
-
 
 /**
  * 
  * @param {string} objId 
  */
-function loadForUpdateById(objId){
+function loadFormWithObjById(objId){
     // Load data with id anId into the corresponding form. 
     let dobjs = getDataById(data, objId)
     if (dobjs.length == 0){
         console.error(`You cannot load a non existing object into form. (object._id: ${objId})`)
     }
     let dobj = dobjs[0]
-
-    //let form = document.getElementById(dobj._type)
-    //form.reset()
-    resetForm(dobj._type)
-
-    let keys = Object.keys(dobj)
-    for (var k of keys){
-        let qInput = `form[id='${dobj._type}'] input[name='${k}']`
-        console.debug(`Query for input: ${qInput}`)
-        let e = document.querySelector(qInput)
-
-        if (e == null){
-            // no input found with name n, look for select as well.
-            let qSelect = `form[id='${dobj._type}'] select[name='${k}']`
-            console.debug(`Query for input: ${qSelect}`)
-            e = document.querySelector(qSelect)
-
-        }
-
-        console.debug(`selected elem: ${e} -> setting ${k}.value:${dobj[k]}`)
-
-        e ? e.setAttribute("value", dobj[k]) : console.error(`Could not find input to set. name: ${k}`)
-    }
+    loadForm(dobj)
 }
 
 /**
@@ -343,21 +362,24 @@ function viewObject(objId){
         td2.setAttribute("class", "tablevaluecell")
         td2.innerHTML = obj[k]
         tr.appendChild(td2)
-        tbody.appendChild(tr)
+        tbody ? tbody.appendChild(tr) : console.error(`Cannot add node to non existent tbody.`)
     }
 }
 
 // 5: OBJECT Listing
 // Customize below -->
 
+/**
+ * List all data objects.
+ */
 function showListing(){
     // Custom for site. To be run after all changes made to the model.
     let ul = document.getElementById("namelist")
-    ul.innerHTML = ""
+    ul ? ul.innerHTML = "" : console.error(`UL is null.`)
     for(var i in data){
         let li = document.createElement("li")
-        li.innerHTML = `${data[i].name} is_a ${data[i]._type} <a href="javascript:viewObject('${data[i]._id}')"">View</a> <a href="javascript:loadForUpdateById('${data[i]._id}')"">Update</a> <a href="javascript:deleteById('${data[i]._id}')">Delete</a>`
-        ul.appendChild(li)
+        li.innerHTML = `${data[i].name} is_a ${data[i]._type} <a href="javascript:viewObject('${data[i]._id}')"">View</a> <a href="javascript:loadFormWithObjById('${data[i]._id}')"">Update</a> <a href="javascript:deleteById('${data[i]._id}')">Delete</a>`
+        ul ? ul.appendChild(li) : console.error(`Cannot append child to nonexistent UL.`)
     }
 }
 

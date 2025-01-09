@@ -1,0 +1,65 @@
+
+body {
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+
+}
+
+h1 {color: #666666;}
+h2 {color: #666666;}
+h3 {color: #666666;}
+header {
+    border: 1px dashed #AAAAAA;
+    margin-top: -10px;
+    margin-left: -10px;
+    height: 60px;
+    padding: 10px;
+    background-color: #EEEEEE;
+}
+
+nav {
+    border: 1px dashed #AAAAAA;
+    background-color: #EEEEEE;
+    position: absolute;
+    top: 80px;
+    left: 0px;
+    height: 100%;
+    width: 10%;
+    padding: 10px;
+}
+
+main {
+    margin-left: 12%;
+    border: 0px dashed #AAAAAA;
+    width: 60%
+}
+
+aside {
+    position:absolute;
+    top: 80px;
+    margin-left:71%;
+    padding: 10px;
+    width: 28%;
+    border: 0px dashed #AAAAAA;
+
+}
+.formdiv {
+    border: 2px solid #AAAAAA;
+    margin: 10px;
+    padding: 15px;
+}
+
+.inputrow {
+    margin-bottom: 10px;
+    display: block;
+}
+table {border-collapse: collapse; font-family: "Helvetica";}
+th {  border: 1px solid #AAA; 
+padding: 5px;
+background-color: yellow;}
+
+td {  border: 1px solid #AAA; 
+padding: 5px;}
+
+.tablekeycell{text-align: end;}
+.tablevaluecell{text-align: left;}
+

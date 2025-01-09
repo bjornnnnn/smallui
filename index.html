@@ -5,79 +5,92 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Small UI Demo</title>
 
-<style type="text/css">
-body {
-    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-
-}
-
-.formdiv {
-    border: 2px solid #AAAAAA;
-    margin: 10px;
-    padding: 15px;
-}
-
-.inputrow {
-    margin-bottom: 10px;
-    display: block;
-}
-table {border-collapse: collapse; font-family: "Helvetica";}
-th {  border: 1px solid #AAA; 
-padding: 5px;
-background-color: yellow;}
-
-td {  border: 1px solid #AAA; 
-padding: 5px;}
-
-.tablekeycell{text-align: end;}
-.tablevaluecell{text-align: left;}
-
-</style>
-    
+    <link href="smallui_demo.css" rel="stylesheet" />
+    <script src="testdata.js"></script>
     <script src="smallui.js"></script>
 
 </head>
 <body>
+    <header>
+        <h2>SMALLUI Demo</h2>
+    </header>
+
+<nav>
+    <h3>Data Objects</h3>
+    <ul id="listofdobjs">
+    </ul>
+
+    </ul>
+</nav>
+
+<main>
     <div class="formdiv">
 <h3>User</h3>
-        <form id="user"  onsubmit="submitForm('user'); this.reset(); return false;">
+        <form id="user"  onsubmit="submitForm('user'); resetForm('user'); return false;">
             <input type="hidden" name="_id" value="0" />
             <input type="hidden" name="_type" value="user" />
             
             <span class="inputrow">
-                <label for="name">Name:</label>
-                <input type="text" name="name" id="name"/>
+                <label for="name">Login Name:</label>
+                <input type="text" name="name" id="name" value="" />
+            
+                <label for="loginpassword">Login Password:</label>
+                <input type="password" name="loginpassword" id="loginpassword" value="" />
+            
+                <label for="passchange">Change Password at next login:</label>
+                <input type="checkbox" name="passchange" id="passchange"/>
+
             </span>
                     
 
+
             <span class="inputrow">
                 <label for="usertype">User type:</label>
-                <select type="select" id="usertype" name="usertype">
-                    <option value="admin">Admin</option>
-                    <option value="user">User</option>
-                    <option value="customer" checked=true>Customer</option>
+                <select id="usertype" name="usertype">
+                    <option value="internal-admin">Internal Admin</option>
+                    <option value="internal">Internal</option>
+                    <option value="external" selected>External</option>
                 </select>
             </span>
             
             <span class="inputrow">
-                <input type="radio" name="access_level" value="active" id="radio_active" checked="true"/>
+                <input type="radio" name="user_status" value="active" id="radio_active" />
                 <label for="radio_active">Active</label>
                 
-                <input type="radio" name="access_level" id="radio_inactive" value="inactive"/>
+                <input type="radio" name="user_status" id="radio_inactive" value="inactive" checked />
                 <label for="radio_inactive">Inactive</label>
             
             </span>
+
+            <span class="inputrow">
+                <label for="description">Notes:</label><br/>
+                <textarea id="description" name="description" cols="80" rows="10"></textarea>
+            </span>
                 <input type="reset" value="Reset"/>
                 <input type="submit" value="Submit"/>
+
         </form>
     </div>
-        <div id="objectListDiv">
-            <ul id="namelist">
-                
-            </ul>
-        </div>
+    
+    
+    <div class="formdiv">
+        <h3>Resource</h3>
 
-        <div id="objectViewDiv">
+    <form id="resource"  onsubmit="submitForm('resource'); resetForm('resource'); return false;">
+        <input type="hidden" name="_id" value="0" />
+        <input type="hidden" name="_type" value="resource" />
+
+        <span class="inputrow">
+            <label for="name">Resource Name:</label>
+            <input type="text" name="name" id="name" value="" />
+        </span>
+
+        <input type="reset" value="Reset"/>
+        <input type="submit" value="Submit"/>
+    </form>
+    </div>
+
+    <div id="objectViewDiv">
             <table>
                 <thead>
                     <tr><th>attribute</th><th>value</th></tr></thead>
@@ -86,5 +99,28 @@ padding: 5px;}
                 </tbody>
             </table>
         </div>
-</body>
+</main>
+
+<aside>
+    <h3>Data</h3>
+    <div id="objectListDiv">
+        <ul id="namelist">
+            
+        </ul>
+        <a href="javascript:loadTestdata()">DEBUG: load test data...</a><br/>
+        <a href="javascript:dumpData()">DEBUG: dump data...</a><br/>
+        
+    </div>
+</aside>
+    
+
+<script>
+    // Do this automatically in init step:
+    resetForm("user")
+    getModelFromForm("user")
+    resetForm("resource")
+    getModelFromForm("resource")
+
+</script>
+    </body>
 </html>
