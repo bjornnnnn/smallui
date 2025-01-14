@@ -1,23 +1,28 @@
 
 body {
     font-family:  'Helvetica', 'Arial', sans-serif;
-
+    background-color: #FAFAFA;
 }
 
 h1 {color: #666666;}
+
 h2 {color: #666666;}
+
 h3 {color: #666666;}
+
+
 header {
-    border: 1px dashed #AAAAAA;
+    border: 1px solid #DDDDDD;
     margin-top: -10px;
     margin-left: -10px;
-    height: 60px;
     padding: 10px;
+    padding-left:35px;
+    height: 60px;
     background-color: #EEEEEE;
 }
 
 nav {
-    border: 1px dashed #AAAAAA;
+    border-right: 1px solid #DDDDDD;
     background-color: #EEEEEE;
     position: absolute;
     top: 80px;
@@ -30,20 +35,34 @@ nav {
 main {
     margin-left: 12%;
     border: 0px dashed #AAAAAA;
-    width: 60%
+    width: auto%
 }
 
 aside {
     position:absolute;
     top: 80px;
-    margin-left:71%;
+    margin-left:60%;
+    margin-top: 15px;
     padding: 10px;
     width: 28%;
     border: 0px dashed #AAAAAA;
-
+    
 }
+
+.headbut {
+    display: inline-block;
+    border: 5px solid #33AA66;
+    color: #33AA66;
+    margin-top: 6px;
+    border-radius: 30px;
+    padding:15px;
+    background-color: chartreuse;
+    font-weight: bold;
+}
+
 .formdiv {
-    border: 2px solid #AAAAAA;
+    border: 2px solid #DDDDDD;
+    background-color: #FEFEFE;
     margin: 10px;
     padding: 15px;
 }
@@ -52,14 +71,19 @@ aside {
     margin-bottom: 10px;
     display: block;
 }
+
 table {border-collapse: collapse;}
 
-th {  border: 1px solid #AAA; 
-padding: 5px;
-background-color: yellow;}
+th {  
+    border: 1px solid #AAA; 
+    padding: 5px;
+    background-color: yellow;
+}
 
-td {  border: 1px solid #AAA; 
-padding: 5px;}
+td {  
+    border: 1px solid #AAA; 
+    padding: 5px;
+}
 
 .tablekeycell{text-align: end;}
 .tablevaluecell{text-align: left;}

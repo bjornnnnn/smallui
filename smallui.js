@@ -31,8 +31,8 @@ function sui_init(){
     initView()
     let forms = document.querySelectorAll("form")
     for (var form of forms){
-        resetForm(form.id)
         getModelFromForm(form.id)
+        resetForm(form.id)
     }
     //resetForm("user")
     //getModelFromForm("user")
@@ -256,10 +256,10 @@ function getDOFromFormById(formId){
  * @param {string} formId 
  */
 function resetForm(formId){
-    if (formId in model){
+    if (model[formId]){
         loadForm(model[formId])
     } else {
-        console.error(`SUI: Cannot find expected form (id:${formId}) in model.`)
+        console.error(`SUI: Cannot find expected form (id='${formId}') in model.`)
     }
 }
 
